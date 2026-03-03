@@ -15,6 +15,28 @@ jobs:
 
       - run: curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start server in background
+        run: |
+          npm run dev &
+          echo $! > pidfile
+          # Wait for server to be ready (port 3000)
+          for i in {1..20}; do
+            if nc -z localhost 3000; then
+              echo "Server is up!"
+              break
+            fi
+            echo "Waiting for server..."
+            sleep 2
+          done
+
       - name: Validate Collection and Spec
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
@@ -23,3 +45,11 @@ jobs:
           postman collection run ./postman/collections/Intergalactic-Bank-API
           postman workspace prepare
           postman workspace push -y
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f pidfile ]; then
+            kill $(cat pidfile) || true
+            rm pidfile
+          fi
