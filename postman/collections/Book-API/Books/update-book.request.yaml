@@ -1,0 +1,19 @@
+$kind: http-request
+name: Update Book
+method: PUT
+url: '{{baseUrl}}/api/v1/books/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: '1'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "The Great Gatsby (Updated)",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925
+    }

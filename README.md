@@ -1,106 +1,82 @@
-# 🌌 Intergalactic Bank API
+# Book API
 
-REST API for bank accounts and transactions with multi-currency support (COSMIC_COINS, GALAXY_GOLD, MOON_BUCKS).
+Simple REST API for books – CRUD only, no auth. Good for demos and learning.
 
-## Quick Start
+## Quick start
 
 ```bash
 npm install && npm run dev
-curl http://localhost:3000/health
 ```
 
-Default: **http://localhost:3000**. Generate API key: `GET /api/v1/auth`. Default admin key: `1234`.
+Base URL: **http://localhost:3000**
 
 ## Endpoints
 
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/health` | GET | No | Health check |
-| `/api/v1/auth` | GET | No | Generate API key |
-| `/api/v1/accounts` | GET, POST | Yes | List / create accounts |
-| `/api/v1/accounts/:id` | GET, PUT, DELETE | Yes | Get / update / delete (soft) |
-| `/api/v1/transactions` | GET, POST | Yes | List / transfer or deposit |
-| `/api/v1/transactions/:id` | GET | Yes | Get transaction |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/api/v1/books` | List all books |
+| GET | `/api/v1/books/:id` | Get one book |
+| POST | `/api/v1/books` | Create a book |
+| PUT | `/api/v1/books/:id` | Update a book |
+| DELETE | `/api/v1/books/:id` | Delete a book |
 
-**Auth:** send `x-api-key: your-key` on all protected routes. **Rate limit:** 300 req/min per key.
+No authentication required.
 
-## Postman
+## Examples
 
-1. Import `OpenAPI/Bank API Reference Documentation.postman_collection.json`
-2. Set `baseUrl` → `http://localhost:3000`, `apiKey` → `1234`
+**List books**
+```bash
+curl http://localhost:3000/api/v1/books
+```
+
+**Create book**
+```bash
+curl -X POST http://localhost:3000/api/v1/books \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Dune","author":"Frank Herbert","year":1965}'
+```
+
+**Update book** (PUT with full or partial fields)
+```bash
+curl -X PUT http://localhost:3000/api/v1/books/1 \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Dune","author":"Frank Herbert","year":1965}'
+```
+
+**Delete book**
+```bash
+curl -X DELETE http://localhost:3000/api/v1/books/1
+```
+
+## Book shape
+
+- **title** (string, required)
+- **author** (string, required)
+- **year** (number, optional)
+
+Responses use `{ book: {...} }` or `{ books: [...] }`. Errors use `{ error: { name, message } }`.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server (auto-reload) |
-| `npm start` | Production |
-| `npm test` | Run tests |
-| `npm test -- --coverage` | Tests + coverage |
-| `npm run lint` | Lint |
+- `npm run dev` – dev server with reload
+- `npm start` – production
+- `npm test` – run tests
+- `npm run lint` – lint
 
-## Config (optional `.env`)
-
-```
-PORT=3000
-ADMIN_API_KEY=1234
-RATE_LIMIT_REQUESTS=300
-RATE_LIMIT_WINDOW_MS=60000
-```
-
-## Project Layout
+## Project layout
 
 ```
 src/
-├── server.js           # Entry
-├── database/db.js      # In-memory store
-├── models/             # Account, Transaction
-├── routes/             # admin, accounts, transactions
-└── middleware/         # auth, errorHandler, rateLimit
+├── server.js
+├── database/db.js    # In-memory store
+├── models/Book.js
+├── routes/books.js
+└── middleware/errorHandler.js
 ```
 
-## Important Behavior
+## Config
 
-- **Ownership** – Accounts are scoped to the API key that created them.
-- **Soft delete** – Deleted accounts are flagged; history kept.
-- **Editable** – Only `owner` and `accountType`; balance/currency change via transactions only.
-
-## Example Requests
-
-**Create account** `POST /api/v1/accounts`:
-```json
-{ "owner": "John Doe", "currency": "COSMIC_COINS", "balance": 1000, "accountType": "STANDARD" }
-```
-
-**Transfer** `POST /api/v1/transactions`:
-```json
-{ "fromAccountId": "123", "toAccountId": "456", "amount": 500, "currency": "COSMIC_COINS" }
-```
-
-**Deposit** – Use `"fromAccountId": "0"`.
-
-## Error Format
-
-```json
-{ "error": { "name": "errorType", "message": "Description" } }
-```
-
-Common codes: **400** validation, **401** auth, **403** forbidden, **404** not found, **429** rate limit, **500** server error.
-
-## Sample Data (on startup)
-
-- Nova Newman (10k COSMIC_COINS), Gary Galaxy (237 COSMIC_COINS), Luna Starlight (5k GALAXY_GOLD) – all under admin key `1234`.
-
-## Account Types & Currencies
-
-**Types:** STANDARD, PREMIUM, BUSINESS. **Currencies:** COSMIC_COINS, GALAXY_GOLD, MOON_BUCKS.
-
-## Replacing Storage
-
-Swap in a real DB by updating `src/database/db.js` with your driver and CRUD; the rest of the app stays the same.
-
----
-
-**More detail** → `CLAUDE.md` · **Tests** → `npm test`
+Optional `.env`: `PORT=3000`
 
 License: ISC
