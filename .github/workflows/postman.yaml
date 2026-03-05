@@ -38,12 +38,19 @@ jobs:
             sleep 2
           done
 
-      - name: Validate Collection and Push to Cloud
+      - name: Validate Collection
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
         run: |
           postman login --with-api-key "$POSTMAN_API_KEY"
           postman collection run ./postman/collections/Book-API
+
+      - name: Push to Postman Cloud
+        if: github.event_name == 'push'
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: |
+          postman login --with-api-key "$POSTMAN_API_KEY"
           postman workspace prepare
           postman workspace push -y
 
