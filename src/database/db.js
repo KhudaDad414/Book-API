@@ -13,8 +13,8 @@ class Database {
 
   _seed() {
     const sample = [
-      new Book('1', 'The Great Gatsby', 'F. Scott Fitzgerald', 1925),
-      new Book('2', '1984', 'George Orwell', 1949)
+      new Book('1', 'The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'Scribner'),
+      new Book('2', '1984', 'George Orwell', 1949, 'Secker & Warburg')
     ];
     sample.forEach(b => this.books.set(b.id, b));
   }
@@ -29,7 +29,7 @@ class Database {
 
   createBook(data) {
     const id = uuidv4().slice(0, 8);
-    const book = new Book(id, data.title.trim(), data.author.trim(), data.year ?? null);
+    const book = new Book(id, data.title.trim(), data.author.trim(), data.year ?? null, data.publisher ? data.publisher.trim() : null);
     this.books.set(id, book);
     return book;
   }
@@ -40,6 +40,7 @@ class Database {
     if (data.title !== undefined) book.title = data.title.trim();
     if (data.author !== undefined) book.author = data.author.trim();
     if (data.year !== undefined) book.year = data.year;
+    if (data.publisher !== undefined) book.publisher = data.publisher ? data.publisher.trim() : null;
     return book;
   }
 

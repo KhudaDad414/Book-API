@@ -1,0 +1,5 @@
+workspace:
+  id: bc3391dd-f878-43c3-977f-da01f0b63f07
+cloudResources:
+  collections:
+    ../postman/collections/Book API: 21505573-9b973608-fff1-41d9-a176-67845f911fd0

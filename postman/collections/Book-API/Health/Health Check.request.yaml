@@ -1,0 +1,24 @@
+$kind: http-request
+name: Health Check
+description: Returns the health status of the API with current timestamp
+method: GET
+url: '{{baseUrl}}/health'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has status property equal to ok", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("status");
+        pm.expect(jsonData.status).to.eql("ok");
+      });
+
+      pm.test("Response has timestamp property", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("timestamp");
+      });

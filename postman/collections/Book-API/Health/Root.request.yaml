@@ -1,0 +1,18 @@
+$kind: http-request
+name: Root
+description: Returns API info message with welcome information
+method: GET
+url: '{{baseUrl}}/'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has message property", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("message");
+      });

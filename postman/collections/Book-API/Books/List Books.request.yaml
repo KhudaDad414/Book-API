@@ -1,0 +1,28 @@
+$kind: http-request
+name: List Books
+description: Returns an array of all books in the collection
+method: GET
+url: '{{baseUrl}}/api/v1/books'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has books array", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("books");
+        pm.expect(jsonData.books).to.be.an("array");
+      });
+
+      pm.test("Each book has required properties", function () {
+        const jsonData = pm.response.json();
+        jsonData.books.forEach(function(book) {
+          pm.expect(book).to.have.property("id");
+          pm.expect(book).to.have.property("title");
+          pm.expect(book).to.have.property("author");
+        });
+      });

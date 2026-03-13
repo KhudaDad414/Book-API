@@ -39,7 +39,7 @@ router.put('/:id', (req, res) => {
     return res.status(404).json({ error: { name: 'notFound', message: 'Book not found' } });
   }
   const updates = req.body;
-  const merged = { title: updates.title ?? book.title, author: updates.author ?? book.author, year: updates.year !== undefined ? updates.year : book.year };
+  const merged = { title: updates.title ?? book.title, author: updates.author ?? book.author, year: updates.year !== undefined ? updates.year : book.year, publisher: updates.publisher !== undefined ? updates.publisher : book.publisher };
   const validation = Book.validate(merged);
   if (!validation.isValid) {
     return res.status(400).json({ error: { name: 'validationError', message: validation.error } });

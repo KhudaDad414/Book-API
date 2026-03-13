@@ -1,13 +1,14 @@
 /**
- * Book model – title, author, optional year
+ * Book model – title, author, optional year, optional publisher
  */
 
 class Book {
-  constructor(id, title, author, year = null) {
+  constructor(id, title, author, year = null, publisher = null) {
     this.id = id;
     this.title = title;
     this.author = author;
     this.year = year;
+    this.publisher = publisher;
   }
 
   static validate(data) {
@@ -20,6 +21,9 @@ class Book {
     if (data.year != null && (typeof data.year !== 'number' || data.year < 0 || !Number.isInteger(data.year))) {
       return { isValid: false, error: 'Year must be a non-negative integer' };
     }
+    if (data.publisher != null && (typeof data.publisher !== 'string' || !data.publisher.trim())) {
+      return { isValid: false, error: 'Publisher must be a non-empty string if provided' };
+    }
     return { isValid: true };
   }
 
@@ -28,7 +32,8 @@ class Book {
       id: this.id,
       title: this.title,
       author: this.author,
-      year: this.year
+      year: this.year,
+      publisher: this.publisher
     };
   }
 }
