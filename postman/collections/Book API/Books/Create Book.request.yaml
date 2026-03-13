@@ -2,11 +2,10 @@ $kind: http-request
 name: Create Book
 description: Creates a new book in the collection. Returns 201 with the created book.
 method: POST
-url: '{{baseUrl}}/api/v1/books'
+url: "{{baseUrl}}/api/v1/books"
 order: 3000
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
@@ -18,7 +17,6 @@ body:
     }
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status code is 201", function () {
         pm.response.to.have.status(201);
@@ -36,9 +34,15 @@ scripts:
         pm.expect(jsonData.book).to.have.property("author");
       });
 
+      pm.test("Book has publisher property", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData.book).to.have.property("publisher");
+      });
+
       pm.test("Save book id to collection variable", function () {
         const jsonData = pm.response.json();
         if (jsonData.book && jsonData.book.id) {
           pm.collectionVariables.set("bookId", jsonData.book.id);
         }
       });
+    language: text/javascript
