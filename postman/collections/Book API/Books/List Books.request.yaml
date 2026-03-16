@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/books"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has books array", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("books");
+        pm.expect(jsonData.books).to.be.an("array");
+      });
+
+      pm.test("Each book has required properties", function () {
+        const jsonData = pm.response.json();
+        jsonData.books.forEach(function(book) {
+          pm.expect(book).to.have.property("id");
+          pm.expect(book).to.have.property("title");
+          pm.expect(book).to.have.property("author");
+        });
+      });
+    language: text/javascript
+order: 1000

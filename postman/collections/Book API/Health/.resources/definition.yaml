@@ -1,0 +1,3 @@
+$kind: collection
+description: Health and status endpoints for the API
+order: 1000

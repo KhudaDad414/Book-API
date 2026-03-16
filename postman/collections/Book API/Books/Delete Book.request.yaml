@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}:/api/v1/books/:id"
+method: DELETE
+pathVariables:
+  - key: id
+    value: ""
+    description: The UUID of the book to delete
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 or 404", function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 404]);
+      });
+
+      pm.test("If 200, response has message property", function () {
+        if (pm.response.code === 200) {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property("message");
+        }
+      });
+    language: text/javascript
+order: 5000

@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/health"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+        pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has status property equal to ok", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("status");
+        pm.expect(jsonData.status).to.eql("ok");
+      });
+
+      pm.test("Response has timestamp property", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("timestamp");
+      });
+    language: text/javascript
+order: 2000

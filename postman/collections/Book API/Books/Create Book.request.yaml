@@ -1,0 +1,40 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/books"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+        pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has book object", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.property("book");
+      });
+
+      pm.test("Book has required properties", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData.book).to.have.property("id");
+        pm.expect(jsonData.book).to.have.property("title");
+        pm.expect(jsonData.book).to.have.property("author");
+      });
+
+      pm.test("Book has publisher property", function () {
+        const jsonData = pm.response.json();
+        pm.expect(jsonData.book).to.have.property("publisher");
+      });
+
+      pm.test("Save book id to collection variable", function () {
+        const jsonData = pm.response.json();
+        if (jsonData.book && jsonData.book.id) {
+          pm.collectionVariables.set("bookId", jsonData.book.id);
+        }
+      });
+    language: text/javascript
+order: 3000

@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{baseUrl}}:/api/v1/books/:id"
+method: PUT
+headers:
+  Content-Type: application/json
+pathVariables:
+  - key: id
+    value: ""
+    description: The UUID of the book to update
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 or 404", function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 404]);
+      });
+
+      pm.test("If 200, response has book object", function () {
+        if (pm.response.code === 200) {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.have.property("book");
+        }
+      });
+    language: text/javascript
+order: 4000
