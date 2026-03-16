@@ -13,7 +13,7 @@ scripts:
       });
 
 
-      pm.test("If 200, response has book object with required properties",
+      pm.test("If 200, response has book object with required properties.",
       function () {
         if (pm.response.code === 200) {
           const jsonData = pm.response.json();
