@@ -6,7 +6,7 @@ headers:
 pathVariables:
   - key: id
     value: ""
-    description: The UUID of the book to update
+    description: The UUID of the book to update.
 body:
   type: json
   content: ""
